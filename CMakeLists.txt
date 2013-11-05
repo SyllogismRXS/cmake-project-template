@@ -56,16 +56,9 @@ install(DIRECTORY ${SYLLO_LIB_DIR}/
 include_directories(${SYLLO_INC_DIR})
 
 ## copy to syllo/include
-file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${SYLLO_SRC_DIR} src/*.h src/*.proto)
+file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${SYLLO_SRC_DIR} src/*.h)
 foreach(I ${INCLUDE_FILES})
   configure_file(${SYLLO_SRC_DIR}/${I} ${SYLLO_INC_DIR}/syllo/${I} @ONLY)
 endforeach()
-
-## copy to syllo/include
-file(GLOB_RECURSE GEN_INCLUDE_FILES RELATIVE ${SYLLO_BUILD_DIR}/src *.pb.h)
-foreach(I ${GEN_INCLUDE_FILES})
-  configure_file(${SYLLO_BUILD_DIR}/src/${I} ${SYLLO_INC_DIR}/syllo/${I} @ONLY)
-endforeach()
-
 
 add_subdirectory(src)

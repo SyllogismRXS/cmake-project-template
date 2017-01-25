@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
-project (syllo)
+set (PROJECT_NAME "syllo")
+project (${PROJECT_NAME})
 
 set(SYLLO_VERSION_MAJOR "0")
 set(SYLLO_VERSION_MINOR "0")
@@ -62,3 +63,17 @@ foreach(I ${INCLUDE_FILES})
 endforeach()
 
 add_subdirectory(src)
+
+########################################
+# Binary installation generation
+########################################
+set(VERSION "1.0.1")
+set(CPACK_PACKAGE_VERSION ${VERSION})
+set(CPACK_GENERATOR "RPM")
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+set(CPACK_PACKAGE_RELEASE 1)
+set(CPACK_PACKAGE_CONTACT "Kevin DeMarco")
+set(CPACK_PACKAGE_VENDOR "syllo company")
+set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE}.${CMAKE_SYSTEM_PROCESSOR}")
+include(CPack)

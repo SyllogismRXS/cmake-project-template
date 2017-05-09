@@ -1,4 +1,4 @@
-#include "SylloLib.h"
+#include <syllo/syllo-lib/SylloLib.h>
 
 SylloLib::SylloLib()
 {

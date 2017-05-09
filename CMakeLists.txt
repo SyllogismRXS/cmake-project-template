@@ -11,8 +11,10 @@ set(SYLLO_VERSION_DATE "2012.12.30")
 # give SYLLO 1 series a few more soversions
 set(SYLLO_SOVERSION "00")
 
-set(CMAKE_INSTALL_PREFIX /usr/local)
-
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set (CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "default install path" FORCE )
+endif()
+  
 # fetch all the local directories for generated code
 get_filename_component(SYLLO_LIB_DIR ./lib ABSOLUTE)
 get_filename_component(SYLLO_BIN_DIR ./bin ABSOLUTE)
@@ -40,27 +42,23 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SYLLO_BIN_DIR} CACHE PATH
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SYLLO_LIB_DIR} CACHE PATH 
   "Output directory for the static libraries (archives)" )
 
-INSTALL(DIRECTORY ${SYLLO_INC_DIR} DESTINATION ${CMAKE_INSTALL_PREFIX}
-  FILES_MATCHING REGEX .*\\.h|.*\\.proto
+INSTALL(
+  DIRECTORY ${SYLLO_INC_DIR}/syllo
+  DESTINATION include
 )
 
-#INSTALL(TARGETS ${} 
-#  LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-#  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-#)
-
-install(DIRECTORY ${SYLLO_LIB_DIR}/ 
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+INSTALL(
+  DIRECTORY ${SYLLO_LIB_DIR}/ 
+  DESTINATION lib
   )
+
+INSTALL(
+  DIRECTORY ${SYLLO_BIN_DIR}/
+  DESTINATION bin
+)
 
 ## let cmake know where the headers are
 include_directories(${SYLLO_INC_DIR})
-
-## copy to syllo/include
-file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${SYLLO_SRC_DIR} src/*.h)
-foreach(I ${INCLUDE_FILES})
-  configure_file(${SYLLO_SRC_DIR}/${I} ${SYLLO_INC_DIR}/syllo/${I} @ONLY)
-endforeach()
 
 add_subdirectory(src)
 
@@ -69,11 +67,11 @@ add_subdirectory(src)
 ########################################
 set(VERSION "1.0.1")
 set(CPACK_PACKAGE_VERSION ${VERSION})
-set(CPACK_GENERATOR "RPM")
+set(CPACK_GENERATOR "DEB")
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_RELEASE 1)
 set(CPACK_PACKAGE_CONTACT "Kevin DeMarco")
 set(CPACK_PACKAGE_VENDOR "syllo company")
-set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE}.${CMAKE_SYSTEM_PROCESSOR}")
 include(CPack)

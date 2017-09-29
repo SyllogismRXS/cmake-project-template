@@ -1,0 +1,12 @@
+Source: cmake-project-template
+Section: devel
+Priority: optional
+Maintainer: Kevin DeMarco <kevin.demarco@gmail.com>
+Build-Depends: cmake, build-essential
+Homepage: http://www.kevindemarco.com
+
+Package: cmake-project-template
+Architecture: any
+Depends: 
+Description: First test-package
+ An example CMake C++ project and deb source package.

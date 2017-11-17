@@ -1,4 +1,4 @@
-cmake-project-template (0.1-0ppa0) oneiric; urgency=low
+cmake-project-template (0.1-0ppa0) xenial; urgency=low
 
   * Initial upload!
 

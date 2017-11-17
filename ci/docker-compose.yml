@@ -5,8 +5,7 @@ services:
     build:
         context: ../
         dockerfile: ./ci/Dockerfile
-        args:
-          - USERNAME=syllogismrxs
+        args:          
           - USERID=1000
     image: syllogismrxs/cmake-project-template:developer
     stdin_open: true

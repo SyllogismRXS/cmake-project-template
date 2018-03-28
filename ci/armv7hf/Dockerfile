@@ -36,7 +36,7 @@ ENV AS=/usr/bin/${CROSS_TRIPLE}-as \
     CXX=/usr/bin/${CROSS_TRIPLE}-g++ \
     LD=/usr/bin/${CROSS_TRIPLE}-ld
 
-ENV hi temp
+ENV hi temp2
 
 RUN git clone https://github.com/SyllogismRXS/cmake-project-template.git
 
@@ -46,7 +46,9 @@ RUN mkdir cmake-project-template/build && \
     make && \
     make package
 
-RUN apt-get install -y qemu-user qemu-user-static
-RUN update-binfmts --display
 
-RUN qemu-arm-static -L /usr/arm-linux-gnueabihf ./cmake-project-template/bin/syllo-hello-world
+
+# RUN apt-get install -y qemu-user qemu-user-static
+# RUN update-binfmts --display
+#
+# RUN qemu-arm-static -L /usr/arm-linux-gnueabihf ./cmake-project-template/bin/syllo-hello-world

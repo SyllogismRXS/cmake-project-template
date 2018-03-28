@@ -36,11 +36,13 @@ ENV AS=/usr/bin/${CROSS_TRIPLE}-as \
     CXX=/usr/bin/${CROSS_TRIPLE}-g++ \
     LD=/usr/bin/${CROSS_TRIPLE}-ld
 
+ENV hi temp
+
 RUN git clone https://github.com/SyllogismRXS/cmake-project-template.git
 
 RUN mkdir cmake-project-template/build && \
     cd cmake-project-template/build && \
-    cmake .. && \
+    cmake .. -DPACKAGE_ARCHITECTURE=armhf && \
     make && \
     make package
 

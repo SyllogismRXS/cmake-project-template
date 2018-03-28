@@ -5,6 +5,9 @@ file (GLOB HDRS *.h)
 
 add_executable(${APP_NAME} ${SRCS})
 
+install(TARGETS ${APP_NAME} DESTINATION bin)
+
+
 # Link executable to other libraries
 #target_link_libraries(${APP_NAME})
 
@@ -19,7 +22,7 @@ add_executable(${APP_NAME} ${SRCS})
 #file( GLOB SRCS *.cpp)
 #file( GLOB HDRS *.h)
 #
-#ADD_LIBRARY(${LIBRARY_NAME} SHARED 
+#ADD_LIBRARY(${LIBRARY_NAME} SHARED
 #  ${SRCS}
 #  )
 #

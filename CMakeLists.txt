@@ -52,10 +52,10 @@ INSTALL(
   DESTINATION lib
   )
 
-INSTALL(
-  DIRECTORY ${SYLLO_BIN_DIR}/
-  DESTINATION bin
-)
+#INSTALL(
+#  DIRECTORY ${SYLLO_BIN_DIR}/
+#  DESTINATION bin
+#)
 
 ## let cmake know where the headers are
 include_directories(${SYLLO_INC_DIR})

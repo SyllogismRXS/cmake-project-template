@@ -13,7 +13,7 @@ RUN echo 'deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports xenial main univ
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 437D05B5 && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C0B21F32 && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4C46402
-    
+
 RUN apt-get update
 
 #RUN echo 'deb [arch=armhf] http://repos.rcn-ee.com/ubuntu/ xenial main' | cat - /etc/apt/sources.list > temp && mv temp /etc/apt/sources.list && \
@@ -41,7 +41,8 @@ RUN git clone https://github.com/SyllogismRXS/cmake-project-template.git
 RUN mkdir cmake-project-template/build && \
     cd cmake-project-template/build && \
     cmake .. && \
-    make
+    make && \
+    make package
 
 RUN apt-get install -y qemu-user qemu-user-static
 RUN update-binfmts --display

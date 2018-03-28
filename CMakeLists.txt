@@ -12,9 +12,9 @@ set(SYLLO_VERSION_DATE "2012.12.30")
 set(SYLLO_SOVERSION "00")
 
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set (CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "default install path" FORCE )
+  set (CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "default install path" FORCE )
 endif()
-  
+
 # fetch all the local directories for generated code
 get_filename_component(SYLLO_LIB_DIR ./lib ABSOLUTE)
 get_filename_component(SYLLO_BIN_DIR ./bin ABSOLUTE)
@@ -35,11 +35,11 @@ set(EXECUTABLE_OUTPUT_PATH ${SYLLO_BIN_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SYLLO_LIB_DIR})
 
 ## set the cmake defaults for libraries and binaries
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SYLLO_LIB_DIR} CACHE PATH 
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SYLLO_LIB_DIR} CACHE PATH
   "Output directory for the dynamic libraries" )
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SYLLO_BIN_DIR} CACHE PATH
   "Output directory for the binaries" )
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SYLLO_LIB_DIR} CACHE PATH 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SYLLO_LIB_DIR} CACHE PATH
   "Output directory for the static libraries (archives)" )
 
 INSTALL(
@@ -48,7 +48,7 @@ INSTALL(
 )
 
 INSTALL(
-  DIRECTORY ${SYLLO_LIB_DIR}/ 
+  DIRECTORY ${SYLLO_LIB_DIR}/
   DESTINATION lib
   )
 
@@ -65,6 +65,13 @@ add_subdirectory(src)
 ########################################
 # Binary installation generation
 ########################################
+set(PACKAGE_ARCHITECTURE "" CACHE STRING "Package architecture")
+if (NOT "${PACKAGE_ARCHITECTURE}" STREQUAL "")
+  set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "${PACKAGE_ARCHITECTURE}")
+else()
+  set(PACKAGE_ARCHITECTURE "${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
 set(VERSION "1.0.1")
 set(CPACK_PACKAGE_VERSION ${VERSION})
 set(CPACK_GENERATOR "DEB")
@@ -73,5 +80,5 @@ set(CPACK_PACKAGE_RELEASE 1)
 set(CPACK_PACKAGE_CONTACT "Kevin DeMarco")
 set(CPACK_PACKAGE_VENDOR "syllo company")
 set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
-set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE}.${CMAKE_SYSTEM_PROCESSOR}")
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE}.${PACKAGE_ARCHITECTURE}")
 include(CPack)

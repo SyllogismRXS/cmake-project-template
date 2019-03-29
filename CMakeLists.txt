@@ -1,66 +1,100 @@
 cmake_minimum_required (VERSION 2.6)
-set (PROJECT_NAME "syllo")
-project (${PROJECT_NAME})
+project (syllo)
 
-set(SYLLO_VERSION_MAJOR "0")
-set(SYLLO_VERSION_MINOR "0")
-set(SYLLO_VERSION_PATCH "0")
-set(SYLLO_VERSION "${SYLLO_VERSION_MAJOR}.${SYLLO_VERSION_MINOR}.${SYLLO_VERSION_PATCH}")
-set(SYLLO_VERSION_DATE "2012.12.30")
-
-# give SYLLO 1 series a few more soversions
-set(SYLLO_SOVERSION "00")
+set(PROJECT_VERSION "0.0.1")
 
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set (CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "default install path" FORCE )
 endif()
 
 # fetch all the local directories for generated code
-get_filename_component(SYLLO_LIB_DIR ./lib ABSOLUTE)
-get_filename_component(SYLLO_BIN_DIR ./bin ABSOLUTE)
-get_filename_component(SYLLO_INC_DIR ./include ABSOLUTE)
-get_filename_component(SYLLO_SRC_DIR ./src ABSOLUTE)
-get_filename_component(SYLLO_SHARE_DIR ./share ABSOLUTE)
-get_filename_component(SYLLO_BUILD_DIR ./build ABSOLUTE)
-get_filename_component(SYLLO_SCRIPTS_DIR ./scripts ABSOLUTE)
+get_filename_component(PROJECT_INCLUDE_DIR ./include ABSOLUTE)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 
-set(CMAKE_CXX_FLAGS "-g -Wall")
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall") # -fprofile-arcs -ftest-coverage")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall") # -fprofile-arcs -ftest-coverage")
-
-set(EXECUTABLE_OUTPUT_PATH ${SYLLO_BIN_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SYLLO_LIB_DIR})
-
-## set the cmake defaults for libraries and binaries
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SYLLO_LIB_DIR} CACHE PATH
-  "Output directory for the dynamic libraries" )
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SYLLO_BIN_DIR} CACHE PATH
-  "Output directory for the binaries" )
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SYLLO_LIB_DIR} CACHE PATH
-  "Output directory for the static libraries (archives)" )
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
 INSTALL(
-  DIRECTORY ${SYLLO_INC_DIR}/syllo
+  DIRECTORY ${PROJECT_INCLUDE_DIR}/syllo
   DESTINATION include
 )
 
-INSTALL(
-  DIRECTORY ${SYLLO_LIB_DIR}/
-  DESTINATION lib
+add_subdirectory(src)
+
+#############################################################################
+# Generate the cmake configuration files for the build tree
+#############################################################################
+include(CMakePackageConfigHelpers)
+
+# Configure variables used in project-config.cmake.in for build tree
+set(TMP_INCLUDE_INSTALL_DIR ${PROJECT_SOURCE_DIR}/include)
+set(SHARE_INSTALL_DIR ${PROJECT_SOURCE_DIR}/share)
+
+configure_package_config_file(
+  ${PROJECT_SOURCE_DIR}/cmake/Modules/project-config.cmake.in
+  ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
+  INSTALL_DESTINATION ${PROJECT_BINARY_DIR}
+  PATH_VARS TMP_INCLUDE_INSTALL_DIR SHARE_INSTALL_DIR
   )
 
-#INSTALL(
-#  DIRECTORY ${SYLLO_BIN_DIR}/
-#  DESTINATION bin
-#)
+write_basic_package_version_file(
+  ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+  )
 
-## let cmake know where the headers are
-include_directories(${SYLLO_INC_DIR})
+# Export project export set to the build tree
+export(
+  EXPORT ${PROJECT_NAME}-targets
+  FILE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake"
+  )
 
-add_subdirectory(src)
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry ~/.cmake)
+export(PACKAGE ${PROJECT_NAME})
+
+#############################################################################
+# Generate the cmake configuration files for the install tree
+#############################################################################
+set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Include install dir")
+set(SHARE_INSTALL_DIR share/)
+set(LIB_INSTALL_DIR lib/ CACHE PATH "Library install dir")
+set(CMAKE_CONFIG_DEST "${LIB_INSTALL_DIR}/${PROJECT_NAME}/cmake")
+
+# Configure variables used in project-config.cmake.in for install tree
+set(TMP_INCLUDE_INSTALL_DIR ${INCLUDE_INSTALL_DIR})
+
+configure_package_config_file(
+  ${PROJECT_SOURCE_DIR}/cmake/Modules/project-config.cmake.in
+  ${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}-config.cmake
+  INSTALL_DESTINATION ${CMAKE_CONFIG_DEST}
+  PATH_VARS TMP_INCLUDE_INSTALL_DIR
+  )
+
+write_basic_package_version_file(
+  ${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}-config-version.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+  )
+
+# Install cmake config files
+install(
+  FILES ${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}-config.cmake
+  ${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}-config-version.cmake
+  DESTINATION ${CMAKE_CONFIG_DEST}
+  )
+
+# Export project export set to the install tree
+install(
+  EXPORT ${PROJECT_NAME}-targets
+  DESTINATION ${CMAKE_CONFIG_DEST}
+  )
 
 ########################################
 # Binary installation generation
@@ -72,8 +106,7 @@ else()
   set(PACKAGE_ARCHITECTURE "${CMAKE_SYSTEM_PROCESSOR}")
 endif()
 
-set(VERSION "1.0.1")
-set(CPACK_PACKAGE_VERSION ${VERSION})
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_GENERATOR "DEB")
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_RELEASE 1)
